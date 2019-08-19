@@ -3483,6 +3483,10 @@ nochange:
 
 			if (sel == SEL_BACK) {
 				dir = visit_parent(path, newpath, &presel);
+
+        if (strlen(dir) < strlen(initpath))
+          goto nochange;
+
 				if (!dir)
 					goto nochange;
 
