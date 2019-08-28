@@ -479,7 +479,41 @@ static int dentfind(const char *fname, int n);
 static void move_cursor(int target, int ignore_scrolloff);
 static bool getutil(char *util);
 
+#define NUMBER_OF_EXTENSIONS 4
+#define MAX_STRING_SIZE 10
+
+static const char VIDEO_EXTENSIONS[NUMBER_OF_EXTENSIONS][MAX_STRING_SIZE] = {
+        "mkv",
+        "mp4",
+        "vob",
+        "avi"
+};
+
 /* Functions */
+char *get_filename_ext(const char *filename) {
+    char *dot = strrchr(filename, '.');
+    if (!dot || dot == filename) {
+        return "";
+    }
+    return dot + 1;
+}
+
+static bool is_video(const char *filename) {
+    for (int i = 0; i < NUMBER_OF_EXTENSIONS; i++) {
+        char *extension = get_filename_ext(filename);
+
+        // To lowercase
+        for (int i = 0; extension[i]; i++) {
+            extension[i] = tolower(extension[i]);
+        }
+
+        // Compare to known video extensions
+        if (strcmp(extension, VIDEO_EXTENSIONS[i]) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /*
  * CRC8 source:
@@ -3484,8 +3518,8 @@ nochange:
 			if (sel == SEL_BACK) {
 				dir = visit_parent(path, newpath, &presel);
 
-        if (strlen(dir) < strlen(initpath))
-          goto nochange;
+                if (strlen(dir) < strlen(initpath))
+                  goto nochange;
 
 				if (!dir)
 					goto nochange;
@@ -3577,6 +3611,10 @@ nochange:
 				goto begin;
 			case S_IFREG:
 			{
+                if (!is_video(newpath)) {
+                    goto nochange;
+                }
+
 				/* If opened as vim plugin and Enter/^M pressed, pick */
 				if (cfg.picker && sel == SEL_GOIN) {
 					r = mkpath(path, dents[cur].name, newpath);
