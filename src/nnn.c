@@ -479,14 +479,20 @@ static int dentfind(const char *fname, int n);
 static void move_cursor(int target, int ignore_scrolloff);
 static bool getutil(char *util);
 
-#define NUMBER_OF_EXTENSIONS 4
+#define NUMBER_OF_EXTENSIONS 10
 #define MAX_STRING_SIZE 10
 
 static const char VIDEO_EXTENSIONS[NUMBER_OF_EXTENSIONS][MAX_STRING_SIZE] = {
         "mkv",
+        "MKV",
         "mp4",
+        "MP4",
         "vob",
-        "avi"
+        "VOB",
+        "avi",
+        "AVI",
+        "iso",
+        "ISO"
 };
 
 /* Functions */
@@ -502,10 +508,10 @@ static bool is_video(const char *filename) {
     for (int i = 0; i < NUMBER_OF_EXTENSIONS; i++) {
         char *extension = get_filename_ext(filename);
 
-        // To lowercase
-        for (int i = 0; extension[i]; i++) {
-            extension[i] = tolower(extension[i]);
-        }
+//        // To lowercase
+//        for (int i = 0; extension[i]; i++) {
+//            extension[i] = tolower(extension[i]);
+//        }
 
         // Compare to known video extensions
         if (strcmp(extension, VIDEO_EXTENSIONS[i]) == 0) {
